@@ -1,0 +1,288 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Photos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top left, #e6f2ff, #ffffff);
+      color: #333;
+      z-index: 0;
+    }
+    #tsparticles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    header {
+      background: linear-gradient(135deg, #89c2ff, #b3e0ff);
+      padding: 60px 20px;
+      text-align: center;
+      border-bottom: 4px solid #66aaff;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 3.5em;
+      color: #003d66;
+      letter-spacing: 2px;
+    }
+    header h1 i {
+      margin-right: 10px;
+      color: #005fa3;
+    }
+    nav {
+      text-align: center;
+      background-color: #d6eaff;
+      padding: 20px 10px;
+    }
+    nav button {
+      background: linear-gradient(to right, #ffffff, #f0f8ff);
+      border: 2px solid #80bfff;
+      color: #004080;
+      padding: 10px 24px;
+      margin: 5px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+    }
+    nav button:hover, nav button.active {
+      background: #a8d6ff;
+      color: #00264d;
+      transform: translateY(-2px);
+    }
+    main {
+      max-width: 1200px;
+      margin: 60px auto;
+      padding: 50px;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    .album-group {
+      margin-bottom: 60px;
+    }
+    .album-title {
+      font-size: 2.2em;
+      color: #0059b3;
+      border-left: 6px solid #66aaff;
+      padding-left: 18px;
+      margin-bottom: 30px;
+    }
+    .album {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 35px;
+    }
+    .album-item {
+      background: #f0f8ff;
+      border-radius: 16px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      overflow: hidden;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+      cursor: pointer;
+    }
+    .album-item:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+    }
+    .album-item img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+    .album-caption {
+      padding: 18px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #004080;
+      text-align: center;
+      background-color: #eaf5ff;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      overflow: auto;
+    }
+    .modal-content {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.25);
+    }
+    .close {
+      position: absolute;
+      top: 25px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .modal-controls {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+      padding: 0 40px;
+    }
+    .control-btn {
+      color: #ffffff;
+      font-size: 60px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s;
+    }
+    .control-btn:hover {
+      color: #99ccff;
+    }
+    footer {
+      text-align: center;
+      padding: 30px;
+      background: linear-gradient(to right, #b3d9ff, #99ccff);
+      color: #003366;
+      font-size: 14px;
+      border-top: 2px solid #66aaff;
+    }
+  </style>
+</head>
+<body>
+  <div id="tsparticles"></div>
+  <header>
+    <h1><i class="fas fa-camera-retro"></i> My Photos</h1>
+  </header>
+  <nav>
+    <button class="filter-btn active" onclick="filterAlbums('all')">All</button>
+    <button class="filter-btn" onclick="filterAlbums('Travel')">Travel</button>
+    <button class="filter-btn" onclick="filterAlbums('Nature')">Nature</button>
+  </nav>
+  <main>
+    <div class="album-group" data-category="Travel">
+      <div class="album-title">Travel</div>
+      <div class="album">
+        <div class="album-item" onclick="openModal(0)">
+          <img src="photo1.jpg" alt="Photo 1">
+          <div class="album-caption">Sunny Beach</div>
+        </div>
+        <div class="album-item" onclick="openModal(1)">
+          <img src="photo2.jpg" alt="Photo 2">
+          <div class="album-caption">City Lights</div>
+        </div>
+      </div>
+    </div>
+    <div class="album-group" data-category="Nature">
+      <div class="album-title">Nature</div>
+      <div class="album">
+        <div class="album-item" onclick="openModal(2)">
+          <img src="photo3.jpg" alt="Photo 3">
+          <div class="album-caption">Mountain View</div>
+        </div>
+        <div class="album-item" onclick="openModal(3)">
+          <img src="photo4.jpg" alt="Photo 4">
+          <div class="album-caption">Forest Walk</div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div class="modal" id="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div class="modal-controls">
+      <span class="control-btn" onclick="changeSlide(-1)">&#10094;</span>
+      <span class="control-btn" onclick="changeSlide(1)">&#10095;</span>
+    </div>
+    <img class="modal-content" id="modalImage">
+  </div>
+  <footer>
+    &copy; 2025 My Photos. All rights reserved.
+  </footer>
+  <script>
+    tsParticles.load("tsparticles", {
+      fullScreen: { enable: false },
+      background: { color: "transparent" },
+      particles: {
+        number: { value: 30 },
+        color: { value: "#a3d3ff" },
+        shape: { type: "circle" },
+        opacity: {
+          value: 0.4,
+          random: true,
+          anim: { enable: true, speed: 0.5, opacity_min: 0.1, sync: false }
+        },
+        size: {
+          value: 10,
+          random: { enable: true, minimumValue: 3 }
+        },
+        move: {
+          enable: true,
+          speed: 1.5,
+          direction: "top",
+          straight: false,
+          outMode: "out"
+        }
+      },
+      interactivity: {
+        events: {
+          onHover: { enable: true, mode: "bubble" },
+          resize: true
+        },
+        modes: {
+          bubble: { distance: 100, size: 15, duration: 2, opacity: 0.6 }
+        }
+      },
+      detectRetina: true
+    });
+
+    const imageSources = ["photo1.jpg", "photo2.jpg", "photo3.jpg", "photo4.jpg"];
+    let currentIndex = 0;
+    function openModal(index) {
+      currentIndex = index;
+      document.getElementById("modal").style.display = "flex";
+      document.getElementById("modalImage").src = imageSources[currentIndex];
+    }
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+    function changeSlide(direction) {
+      currentIndex = (currentIndex + direction + imageSources.length) % imageSources.length;
+      document.getElementById("modalImage").src = imageSources[currentIndex];
+    }
+    function filterAlbums(category) {
+      const groups = document.querySelectorAll('.album-group');
+      const buttons = document.querySelectorAll('.filter-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      groups.forEach(group => {
+        group.style.display = category === 'all' || group.dataset.category === category ? 'block' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>
